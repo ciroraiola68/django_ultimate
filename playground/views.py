@@ -1,4 +1,3 @@
-from turtle import title
 from django.shortcuts import render
 from django.db.models import Q, F
 from django.db.models import Value, Func, ExpressionWrapper
@@ -6,9 +5,11 @@ from django.db.models.functions import Concat
 from django.db.models.aggregates import Count, Max, Min, Avg, Sum
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction, connection
 
 from store.models import Collection, Product, OrderItem, Order, Customer
 from tags.models import TaggedItem
+
 
 def say_hello(request):
     # try:
@@ -153,6 +154,40 @@ def say_hello(request):
 
     # # UPDATING OBJECTS (2)
     # Collection.objects.filter(pk=12).update(featured_product=None)
+
+    # # DELETING OBJECTS
+    # collection = Collection(pk=12)
+    # collection.delete()
+
+    # # DELETING OBJECTS (2)
+    # Collection.objects.filter(id__gt=12).delete()
+
+
+    # # TRANSACTIONS 
+    # with transaction.atomic():
+    #     order = Order()
+    #     order.customer_id = 1
+    #     order.save()
+
+    #     item = OrderItem()
+    #     item.order = order
+    #     item.product_id = 1
+    #     item.quantity = 1
+    #     item.unit_price = 10
+    #     item.save()
+
+
+    # # EXECUTING RAW SQL QUERIES
+    # queryset = Product.objects.raw('SELECT * FROM store_product')
+
+    # # EXECUTING RAW SQL QUERIES (2)
+    # with connection.cursor() as cursor:
+    #     cursor.execute('SELECT * FROM store_product')
+
+    # # EXECUTING RAW SQL QUERIES (3)
+    # with connection.cursor() as cursor:
+    #     cursor.callproc('get_customers', [1, 2, 'a'])
+
 
 
     context = {
